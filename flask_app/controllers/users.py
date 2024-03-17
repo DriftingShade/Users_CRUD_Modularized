@@ -10,13 +10,9 @@ def index():
 
 @app.route("/create_user", methods=["POST"])
 def create_user():
-
-    data = {
-        "fname": request.form["fname"],
-        "lname": request.form["lname"],
-        "email": request.form["email"],
-    }
-    User.save(data)
+    if not User.validate_user(request.form):
+        return redirect("/")
+    User.save(request.form)
     return redirect("/users")
 
 

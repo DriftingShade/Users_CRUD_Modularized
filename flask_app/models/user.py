@@ -1,4 +1,8 @@
 from flask_app.config.mysqlconnection import connectToMySQL
+from flask import flash
+import re
+
+EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$")
 
 
 class User:
@@ -51,3 +55,17 @@ class User:
         results = connectToMySQL("users_schema").query_db(query, data)
         print(results)
         return results[0]
+
+    @staticmethod
+    def validate_user(user):
+        is_valid = True
+        if not EMAIL_REGEX.match(user["email"]):
+            flash("Invalid Email Address", "Email Address Required")
+            is_valid = False
+        if len(user["fname"]) == 0:
+            flash("First Name Is Required")
+            is_valid = False
+        if len(user["lname"]) == 0:
+            flash("Last Name Is Required")
+            is_valid = False
+        return is_valid
